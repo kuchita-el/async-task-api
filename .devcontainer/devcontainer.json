@@ -1,8 +1,8 @@
 {
-	"name": "Deno",
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
+	"name": "async-task-api",
+	"workspaceFolder": "/workspaces/async-task-api",
+	"dockerComposeFile": "./compose.yaml",
+	"service": "app",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -16,12 +16,11 @@
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
-			"extensions": [
-				"justjavac.vscode-deno-extensionpack"
-			]
+			"extensions": []
 		}
 	},
 	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	}
 

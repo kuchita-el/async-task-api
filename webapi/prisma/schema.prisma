@@ -13,3 +13,21 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum AsyncTaskStatus {
+  WAITING   // 登録待ち
+  RUNNING   // 実行中
+  COMPLETED // 完了
+  ERROR     // エラー
+}
+
+model AsyncTask {
+  id            String           @id @default(uuid())
+  status        AsyncTaskStatus
+  createdAt     DateTime         @default(now())
+  startedAt     DateTime?
+  completedAt   DateTime?
+  errorMessage  String?
+  errorStack    String?
+  payload       Json
+}

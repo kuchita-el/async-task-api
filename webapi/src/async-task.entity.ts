@@ -1,92 +1,92 @@
-// AsyncTaskエンティティの基底型
-export type AsyncTaskBase = {
-  id: string;
-  status: 'WAITING' | 'RUNNING' | 'COMPLETED' | 'ERROR';
-  createdAt: Date;
-};
+// AsyncTaskエンティティの基底クラス
+abstract class AsyncTaskBase {
+  constructor(
+    public readonly id: string,
+    public readonly createdAt: Date,
+  ) {}
+  abstract readonly status: 'WAITING' | 'RUNNING' | 'COMPLETED' | 'ERROR';
+  abstract readonly payload: unknown;
+}
 
-export type WaitingAsyncTask = AsyncTaskBase & {
-  status: 'WAITING';
-  payload: unknown;
-};
+export class WaitingAsyncTask extends AsyncTaskBase {
+  readonly status = 'WAITING';
+  constructor(
+    id: string,
+    createdAt: Date,
+    public readonly payload: unknown,
+  ) {
+    super(id, createdAt);
+  }
+  start(startedAt: Date): RunningAsyncTask {
+    return new RunningAsyncTask(
+      this.id,
+      this.createdAt,
+      startedAt,
+      this.payload,
+    );
+  }
+}
 
-export type RunningAsyncTask = AsyncTaskBase & {
-  status: 'RUNNING';
-  startedAt: Date;
-  payload: unknown;
-};
+export class RunningAsyncTask extends AsyncTaskBase {
+  readonly status = 'RUNNING';
+  constructor(
+    id: string,
+    createdAt: Date,
+    public readonly startedAt: Date,
+    public readonly payload: unknown,
+  ) {
+    super(id, createdAt);
+  }
+  complete(completedAt: Date): CompletedAsyncTask {
+    return new CompletedAsyncTask(
+      this.id,
+      this.createdAt,
+      this.startedAt,
+      completedAt,
+      this.payload,
+    );
+  }
+  error(errorMessage: string, errorStack: string): ErrorAsyncTask {
+    return new ErrorAsyncTask(
+      this.id,
+      this.createdAt,
+      this.startedAt,
+      errorMessage,
+      errorStack,
+      this.payload,
+    );
+  }
+}
 
-export type CompletedAsyncTask = AsyncTaskBase & {
-  status: 'COMPLETED';
-  startedAt: Date;
-  completedAt: Date;
-  payload: unknown;
-};
+export class CompletedAsyncTask extends AsyncTaskBase {
+  readonly status = 'COMPLETED';
+  constructor(
+    id: string,
+    createdAt: Date,
+    public readonly startedAt: Date,
+    public readonly completedAt: Date,
+    public readonly payload: unknown,
+  ) {
+    super(id, createdAt);
+  }
+}
 
-export type ErrorAsyncTask = AsyncTaskBase & {
-  status: 'ERROR';
-  startedAt: Date;
-  errorMessage: string;
-  errorStack: string;
-  payload: unknown;
-};
+export class ErrorAsyncTask extends AsyncTaskBase {
+  readonly status = 'ERROR';
+  constructor(
+    id: string,
+    createdAt: Date,
+    public readonly startedAt: Date,
+    public readonly errorMessage: string,
+    public readonly errorStack: string,
+    public readonly payload: unknown,
+  ) {
+    super(id, createdAt);
+  }
+}
 
 export type AsyncTask =
   | WaitingAsyncTask
   | RunningAsyncTask
   | CompletedAsyncTask
   | ErrorAsyncTask;
-
-// --- 状態遷移用純粋関数 ---
-
-/**
- * 実行待ち→実行中への遷移
- */
-export function startAsyncTask(
-  task: WaitingAsyncTask,
-  startedAt: Date,
-): RunningAsyncTask {
-  return {
-    id: task.id,
-    status: 'RUNNING',
-    createdAt: task.createdAt,
-    startedAt,
-    payload: task.payload,
-  };
-}
-
-/**
- * 実行中→完了への遷移
- */
-export function completeAsyncTask(
-  task: RunningAsyncTask,
-  completedAt: Date,
-): CompletedAsyncTask {
-  return {
-    id: task.id,
-    status: 'COMPLETED',
-    createdAt: task.createdAt,
-    startedAt: task.startedAt,
-    completedAt,
-    payload: task.payload,
-  };
-}
-
-/**
- * 実行中→エラーへの遷移
- */
-export function errorAsyncTask(
-  task: RunningAsyncTask,
-  errorMessage: string,
-  errorStack: string,
-): ErrorAsyncTask {
-  return {
-    id: task.id,
-    status: 'ERROR',
-    createdAt: task.createdAt,
-    startedAt: task.startedAt,
-    errorMessage,
-    errorStack,
-    payload: task.payload,
-  };
-}

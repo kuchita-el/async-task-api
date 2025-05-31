@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 import { AsyncTaskRepository } from '../src/async-task.repository';
 import { AsyncTask } from '../src/async-task.entity';
+import {
+  WaitingAsyncTask,
+  RunningAsyncTask,
+  CompletedAsyncTask,
+  ErrorAsyncTask,
+} from '../src/async-task.entity';
 
 @Injectable()
 export class AsyncTaskRepositoryImpl implements AsyncTaskRepository {
@@ -13,39 +19,35 @@ export class AsyncTaskRepositoryImpl implements AsyncTaskRepository {
     // Prismaのレコードからエンティティへ変換
     switch (record.status) {
       case 'WAITING':
-        return {
-          id: record.id,
-          status: 'WAITING',
-          createdAt: record.createdAt,
-          payload: record.payload,
-        };
+        return new WaitingAsyncTask(
+          record.id,
+          record.createdAt,
+          record.payload,
+        );
       case 'RUNNING':
-        return {
-          id: record.id,
-          status: 'RUNNING',
-          createdAt: record.createdAt,
-          startedAt: record.startedAt!,
-          payload: record.payload,
-        };
+        return new RunningAsyncTask(
+          record.id,
+          record.createdAt,
+          record.startedAt!,
+          record.payload,
+        );
       case 'COMPLETED':
-        return {
-          id: record.id,
-          status: 'COMPLETED',
-          createdAt: record.createdAt,
-          startedAt: record.startedAt!,
-          completedAt: record.completedAt!,
-          payload: record.payload,
-        };
+        return new CompletedAsyncTask(
+          record.id,
+          record.createdAt,
+          record.startedAt!,
+          record.completedAt!,
+          record.payload,
+        );
       case 'ERROR':
-        return {
-          id: record.id,
-          status: 'ERROR',
-          createdAt: record.createdAt,
-          startedAt: record.startedAt!,
-          errorMessage: record.errorMessage!,
-          errorStack: record.errorStack!,
-          payload: record.payload,
-        };
+        return new ErrorAsyncTask(
+          record.id,
+          record.createdAt,
+          record.startedAt!,
+          record.errorMessage!,
+          record.errorStack!,
+          record.payload,
+        );
       default:
         return null;
     }

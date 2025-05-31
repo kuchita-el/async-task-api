@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
-import { AsyncTaskRepository } from '../src/async-task.repository';
-import { AsyncTask } from '../src/async-task.entity';
+import { PrismaService } from '../shared/prisma/prisma.service';
+import { AsyncTaskRepository } from './async-task.repository';
+import { AsyncTask } from './async-task.entity';
 import {
   WaitingAsyncTask,
   RunningAsyncTask,
   CompletedAsyncTask,
   ErrorAsyncTask,
-} from '../src/async-task.entity';
+} from './async-task.entity';
 
 @Injectable()
 export class AsyncTaskRepositoryImpl implements AsyncTaskRepository {

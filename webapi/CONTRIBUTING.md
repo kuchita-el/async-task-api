@@ -7,9 +7,7 @@
 
 ## データベース設計
 
-- prisma/schema.prismaでモデル設計
-- モデル追加・リレーション設計
-- Prismaマイグレーション実行
+[データモデル設計](./docs/データモデル設計.md)を参照。
 
 ## Prisma Clientの生成
 

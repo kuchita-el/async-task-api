@@ -17,7 +17,9 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"Prisma.prisma"
+				"Prisma.prisma",
+				"cweijan.dbclient-jdbc",
+				"cweijan.vscode-database-client2"
 			]
 		}
 	},

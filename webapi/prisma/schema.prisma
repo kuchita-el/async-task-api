@@ -15,19 +15,21 @@ datasource db {
 }
 
 enum AsyncTaskStatus {
-  WAITING   // 登録待ち
-  RUNNING   // 実行中
+  WAITING // 登録待ち
+  RUNNING // 実行中
   COMPLETED // 完了
-  ERROR     // エラー
+  ERROR // エラー
 }
 
 model AsyncTask {
-  id            String           @id @default(uuid())
-  status        AsyncTaskStatus
-  createdAt     DateTime         @default(now())
-  startedAt     DateTime?
-  completedAt   DateTime?
-  errorMessage  String?
-  errorStack    String?
-  payload       Json
+  id              String          @id @default(uuid())
+  status          AsyncTaskStatus
+  createdAt       DateTime        @default(now()) @map("created_at")
+  startedAt       DateTime?       @map("started_at")
+  completedAt     DateTime?       @map("completed_at")
+  errorMessage    String?         @map("error_message")
+  errorStackTrace String?         @map("error_stack_trace")
+  payload         Json
+
+  @@map("async_tasks")
 }
